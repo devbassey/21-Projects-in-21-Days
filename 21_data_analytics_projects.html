@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>21 Data Analytics Projects in 21 Days</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --card: #16161f;
+    --border: #1e1e2e;
+    --accent: #f0c060;
+    --accent2: #60c0f0;
+    --accent3: #f06090;
+    --text: #e8e8f0;
+    --muted: #8888aa;
+    --green: #60f0a0;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* NOISE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* HERO */
+  .hero {
+    position: relative;
+    padding: 80px 40px 60px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    background: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(240,192,96,0.12) 0%, transparent 70%);
+  }
+
+  .hero-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.1s;
+  }
+
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(52px, 10vw, 110px);
+    line-height: 0.9;
+    letter-spacing: 2px;
+    color: var(--text);
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards 0.2s;
+  }
+
+  .hero h1 span {
+    color: var(--accent);
+    display: block;
+  }
+
+  .hero-sub {
+    font-size: 15px;
+    color: var(--muted);
+    max-width: 500px;
+    margin: 24px auto 0;
+    line-height: 1.7;
+    font-weight: 300;
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards 0.35s;
+  }
+
+  /* STATS BAR */
+  .stats-bar {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.5s;
+  }
+
+  .stat {
+    padding: 20px 40px;
+    text-align: center;
+    border-right: 1px solid var(--border);
+  }
+  .stat:last-child { border-right: none; }
+
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    color: var(--accent);
+    display: block;
+  }
+
+  .stat-label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* FILTERS */
+  .filters {
+    padding: 24px 40px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    background: rgba(10,10,15,0.95);
+    backdrop-filter: blur(12px);
+    z-index: 100;
+  }
+
+  .filter-label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    margin-right: 8px;
+  }
+
+  .filter-btn {
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 1px;
+  }
+
+  .filter-btn:hover, .filter-btn.active {
+    background: var(--accent);
+    color: #000;
+    border-color: var(--accent);
+  }
+
+  /* GRID */
+  .projects-grid {
+    padding: 40px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+    gap: 24px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  /* CARD */
+  .project-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+    transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+    opacity: 0;
+    animation: fadeUp 0.5s ease forwards;
+    cursor: pointer;
+  }
+
+  .project-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--accent);
+    box-shadow: 0 0 30px rgba(240,192,96,0.08);
+  }
+
+  .project-card.hidden {
+    display: none;
+  }
+
+  .card-header {
+    padding: 20px 24px 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .day-badge {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 42px;
+    line-height: 1;
+    color: var(--accent);
+    min-width: 54px;
+    opacity: 0.3;
+  }
+
+  .card-title-area { flex: 1; }
+
+  .card-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 17px;
+    line-height: 1.3;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .card-tags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    font-size: 9px;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 2px;
+  }
+
+  .tag-diff-beginner { background: rgba(96,240,160,0.12); color: var(--green); border: 1px solid rgba(96,240,160,0.2); }
+  .tag-diff-intermediate { background: rgba(240,192,96,0.12); color: var(--accent); border: 1px solid rgba(240,192,96,0.2); }
+  .tag-diff-advanced { background: rgba(240,96,144,0.12); color: var(--accent3); border: 1px solid rgba(240,96,144,0.2); }
+  .tag-domain { background: rgba(96,192,240,0.12); color: var(--accent2); border: 1px solid rgba(96,192,240,0.2); }
+
+  .card-body {
+    padding: 18px 24px;
+  }
+
+  .section-label {
+    font-size: 9px;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .card-desc {
+    font-size: 13px;
+    color: #aaaacc;
+    line-height: 1.65;
+    margin-bottom: 18px;
+    font-weight: 300;
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+
+  .info-block {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 10px 12px;
+  }
+
+  .info-block .label {
+    font-size: 9px;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+
+  .info-block .value {
+    font-size: 12px;
+    color: var(--text);
+    font-weight: 400;
+    line-height: 1.4;
+  }
+
+  /* EXPANDABLE SECTIONS */
+  .expand-toggle {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-top: 1px solid var(--border);
+    padding: 12px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    color: var(--muted);
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+
+  .expand-toggle:hover { color: var(--accent); }
+
+  .expand-arrow {
+    transition: transform 0.3s;
+    font-size: 14px;
+  }
+
+  .expand-toggle.open .expand-arrow {
+    transform: rotate(180deg);
+  }
+
+  .expandable {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+  }
+
+  .expandable.open {
+    max-height: 800px;
+  }
+
+  .expand-content {
+    padding: 16px 24px 20px;
+    border-top: 1px solid var(--border);
+  }
+
+  .skills-list, .steps-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .skills-list li {
+    font-size: 12px;
+    color: #aaaacc;
+    padding-left: 16px;
+    position: relative;
+    line-height: 1.5;
+  }
+
+  .skills-list li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-size: 10px;
+  }
+
+  .steps-list li {
+    font-size: 12px;
+    color: #aaaacc;
+    padding: 8px 12px;
+    background: rgba(255,255,255,0.02);
+    border-left: 2px solid var(--border);
+    line-height: 1.5;
+    transition: border-color 0.2s;
+  }
+
+  .steps-list li:hover { border-left-color: var(--accent); }
+
+  .dataset-link-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+    padding: 9px 16px;
+    background: transparent;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 1px;
+    text-decoration: none;
+    border-radius: 2px;
+    transition: all 0.2s;
+    text-transform: uppercase;
+  }
+
+  .dataset-link-btn:hover {
+    background: var(--accent);
+    color: #000;
+  }
+
+  .tools-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+  }
+
+  .tool-chip {
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    padding: 4px 10px;
+    background: rgba(96,192,240,0.08);
+    border: 1px solid rgba(96,192,240,0.15);
+    color: var(--accent2);
+    border-radius: 2px;
+  }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 40px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 1px;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 600px) {
+    .projects-grid { padding: 16px; grid-template-columns: 1fr; }
+    .filters { padding: 16px; }
+    .hero { padding: 60px 20px 40px; }
+    .stats-bar { flex-wrap: wrap; }
+    .stat { padding: 16px 20px; }
+    .info-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-tag">Data Analytics Curriculum</div>
+  <h1>21 Projects<span>in 21 Days</span></h1>
+  <p class="hero-sub">Real-world datasets. Practical skills. From beginner SQL queries to advanced dashboards — one project per day.</p>
+</div>
+
+<div class="stats-bar">
+  <div class="stat"><span class="stat-num">21</span><span class="stat-label">Projects</span></div>
+  <div class="stat"><span class="stat-num">7</span><span class="stat-label">Domains</span></div>
+  <div class="stat"><span class="stat-num">3</span><span class="stat-label">Difficulty Levels</span></div>
+  <div class="stat"><span class="stat-num">100%</span><span class="stat-label">Free Datasets</span></div>
+</div>
+
+<div class="filters">
+  <span class="filter-label">Filter:</span>
+  <button class="filter-btn active" onclick="filterProjects('all')">All</button>
+  <button class="filter-btn" onclick="filterProjects('beginner')">Beginner</button>
+  <button class="filter-btn" onclick="filterProjects('intermediate')">Intermediate</button>
+  <button class="filter-btn" onclick="filterProjects('advanced')">Advanced</button>
+  <button class="filter-btn" onclick="filterProjects('health')">Health</button>
+  <button class="filter-btn" onclick="filterProjects('finance')">Finance</button>
+  <button class="filter-btn" onclick="filterProjects('sports')">Sports</button>
+  <button class="filter-btn" onclick="filterProjects('social')">Social</button>
+  <button class="filter-btn" onclick="filterProjects('education')">Education</button>
+</div>
+
+<div class="projects-grid" id="projectsGrid"></div>
+
+<footer>Built for learners who want to build real skills with real data · 21 projects · 21 days</footer>
+
+<script>
+const projects = [
+  {
+    day: 1,
+    title: "Student Performance & Grade Distribution Analysis",
+    difficulty: "beginner",
+    domain: "education",
+    duration: "3–4 hrs",
+    tools: ["Python", "Pandas", "Matplotlib"],
+    desc: "Explore student exam scores across subjects, genders, and parental education levels. Understand distributions, spot patterns, and answer: who performs best and why?",
+    objective: "Clean and explore a real education dataset, create summary statistics, and visualize grade distributions.",
+    dataset: "UCI Student Performance Dataset",
+    datasetUrl: "https://archive.ics.uci.edu/dataset/320/student+performance",
+    skills: [
+      "Loading CSV data with Pandas",
+      "Using .describe(), .value_counts(), .groupby()",
+      "Histogram and bar chart creation",
+      "Identifying outliers in exam scores",
+      "Comparing groups with aggregation"
+    ],
+    steps: [
+      "Load dataset and run First Look Ritual (info, describe, isnull, duplicated)",
+      "Explore distributions of math, reading, writing scores",
+      "Group by gender, parental education, lunch type",
+      "Visualize score distributions with histograms",
+      "Calculate mean scores per group and interpret findings",
+      "Write a 3-sentence summary of your findings"
+    ]
+  },
+  {
+    day: 2,
+    title: "COVID-19 Global Trends & Death Rate Analysis",
+    difficulty: "beginner",
+    domain: "health",
+    duration: "4–5 hrs",
+    tools: ["Python", "Pandas", "Matplotlib", "Seaborn"],
+    desc: "Analyze the global spread of COVID-19 across countries. Compute case fatality rates, track daily new cases, and identify which regions were hit hardest.",
+    objective: "Work with time-series health data, handle date columns, and build line charts showing pandemic progression.",
+    dataset: "Our World in Data – COVID-19",
+    datasetUrl: "https://github.com/owid/covid-19-data/tree/master/public/data",
+    skills: [
+      "Parsing and working with datetime columns",
+      "Filtering rows by country and date",
+      "Rolling averages for smoothing time-series",
+      "Computing case fatality rate (deaths/cases)",
+      "Multi-line chart creation"
+    ],
+    steps: [
+      "Load the OWID CSV and inspect columns",
+      "Filter to 5 countries of your choice",
+      "Parse 'date' column and set as index",
+      "Compute 7-day rolling average of new cases",
+      "Calculate and compare case fatality rates",
+      "Plot all 5 countries on a single line chart",
+      "Annotate the peak of each country's wave"
+    ]
+  },
+  {
+    day: 3,
+    title: "Netflix Content Library Exploration",
+    difficulty: "beginner",
+    domain: "social",
+    duration: "3–4 hrs",
+    tools: ["Python", "Pandas", "Matplotlib"],
+    desc: "Dig into Netflix's catalog of movies and TV shows. Discover which genres dominate, how content has grown over the years, and which countries produce the most content.",
+    objective: "Practice string manipulation, date parsing, and categorical analysis on entertainment data.",
+    dataset: "Netflix Movies & TV Shows (Kaggle)",
+    datasetUrl: "https://www.kaggle.com/datasets/shivamb/netflix-shows",
+    skills: [
+      "Splitting multi-value columns (genres, countries)",
+      "Extracting year from date strings",
+      "Value counts and percentage breakdowns",
+      "Bar charts for categorical data",
+      "Trend analysis over years"
+    ],
+    steps: [
+      "Load dataset and check for nulls in key columns",
+      "Split 'listed_in' genre column and explode rows",
+      "Count top 10 genres for movies vs TV shows",
+      "Extract year from 'date_added' and plot content added per year",
+      "Find top 10 content-producing countries",
+      "Plot a heatmap of genre vs type (movie/TV)",
+      "Answer: Is Netflix more movie-heavy or TV-heavy?"
+    ]
+  },
+  {
+    day: 4,
+    title: "World Happiness Report — What Drives Happiness?",
+    difficulty: "beginner",
+    domain: "social",
+    duration: "4 hrs",
+    tools: ["Python", "Pandas", "Seaborn"],
+    desc: "Use the World Happiness Report data to find which factors — GDP, freedom, social support — most strongly correlate with national happiness scores.",
+    objective: "Build a correlation matrix, scatter plots, and rank countries by happiness while interpreting what the data means.",
+    dataset: "World Happiness Report (Kaggle)",
+    datasetUrl: "https://www.kaggle.com/datasets/ajaypalsinghlo/world-happiness-report-2021",
+    skills: [
+      "Correlation matrix with .corr()",
+      "Heatmap visualization",
+      "Scatter plots with trend lines",
+      "Country ranking and sorting",
+      "Interpreting correlation strength"
+    ],
+    steps: [
+      "Load dataset and explore all numeric columns",
+      "Create a correlation matrix for all features",
+      "Plot a Seaborn heatmap of correlations",
+      "Scatter plot: GDP vs Happiness score",
+      "Scatter plot: Freedom vs Happiness score",
+      "Identify top 10 and bottom 10 happiest countries",
+      "State which factor has the strongest correlation with happiness"
+    ]
+  },
+  {
+    day: 5,
+    title: "Titanic Survival Pattern Analysis",
+    difficulty: "beginner",
+    domain: "social",
+    duration: "4–5 hrs",
+    tools: ["Python", "Pandas", "Seaborn", "Matplotlib"],
+    desc: "The classic dataset with a real story. Analyze who survived the Titanic and why. Uncover how class, gender, and age affected survival odds.",
+    objective: "Practice data cleaning (missing values), grouped analysis, and categorical visualization.",
+    dataset: "Titanic Dataset (Kaggle)",
+    datasetUrl: "https://www.kaggle.com/competitions/titanic/data",
+    skills: [
+      "Handling missing values with fillna/dropna",
+      "Groupby with multiple columns",
+      "Pivot tables",
+      "Stacked bar charts",
+      "Binning continuous variables (age groups)"
+    ],
+    steps: [
+      "Load data, inspect missing values in Age, Cabin, Embarked",
+      "Fill Age nulls with median; drop Cabin column",
+      "Create 'AgeGroup' bins: Child, Teen, Adult, Senior",
+      "Calculate survival rate by gender and class",
+      "Build a pivot table: Class vs Gender vs Survival Rate",
+      "Visualize with a grouped bar chart",
+      "Write: 'The most critical factor in survival was...'"
+    ]
+  },
+  {
+    day: 6,
+    title: "Superstore Sales Performance Dashboard",
+    difficulty: "intermediate",
+    domain: "finance",
+    duration: "5–6 hrs",
+    tools: ["Python", "Pandas", "Matplotlib", "Seaborn"],
+    desc: "Analyze a retail superstore's sales data across regions, categories, and time. Identify best-selling products, most profitable regions, and seasonal sales trends.",
+    objective: "Simulate a real business analytics task — find insights that a manager could act on.",
+    dataset: "Sample Superstore (Kaggle / Tableau Public)",
+    datasetUrl: "https://www.kaggle.com/datasets/vivek468/superstore-dataset-final",
+    skills: [
+      "Datetime-based grouping (monthly, quarterly)",
+      "Profit margin calculations",
+      "Multi-dimensional groupby",
+      "Identifying loss-making products",
+      "Building a summary insight table"
+    ],
+    steps: [
+      "Load dataset and parse Order Date column",
+      "Calculate profit margin = Profit / Sales",
+      "Find top 10 products by revenue and by profit",
+      "Identify categories with negative profit margins",
+      "Plot monthly sales trend for 3 years",
+      "Compare performance by region (bar chart)",
+      "Deliver 3 actionable business recommendations"
+    ]
+  },
+  {
+    day: 7,
+    title: "Air Quality Index Analysis Across US Cities",
+    difficulty: "intermediate",
+    domain: "health",
+    duration: "5–6 hrs",
+    tools: ["Python", "Pandas", "Matplotlib", "Folium"],
+    desc: "Examine EPA air quality data to find which US cities have the worst air quality, how AQI changes seasonally, and which pollutants drive the most danger.",
+    objective: "Work with real environmental data, aggregate across cities and time, and optionally create a simple map visualization.",
+    dataset: "EPA Air Quality System (AQS) Data",
+    datasetUrl: "https://aqs.epa.gov/aqsweb/airdata/download_files.html",
+    skills: [
+      "Aggregating by city and state",
+      "Seasonal trend analysis",
+      "Conditional categorization (Good/Moderate/Unhealthy)",
+      "Box plots for distribution comparison",
+      "Optional: mapping with Folium"
+    ],
+    steps: [
+      "Download annual AQI by county CSV from EPA",
+      "Clean and filter to continental US states",
+      "Count days in each AQI category per city",
+      "Find 10 cities with most 'Unhealthy' days",
+      "Plot seasonal AQI trend for 2 cities",
+      "Create a box plot comparing AQI distributions by region",
+      "Map the top 20 most polluted cities (optional: Folium)"
+    ]
+  },
+  {
+    day: 8,
+    title: "NBA Player Performance & Salary Efficiency",
+    difficulty: "intermediate",
+    domain: "sports",
+    duration: "5–6 hrs",
+    tools: ["Python", "Pandas", "Matplotlib", "Seaborn"],
+    desc: "Combine NBA player stats with salary data to find the most and least efficient players relative to pay. Who is overpaid? Who is a bargain?",
+    objective: "Merge two datasets, create custom efficiency metrics, and build a scatter plot revealing player value.",
+    dataset: "Basketball Reference + HoopsHype Salary Data",
+    datasetUrl: "https://www.kaggle.com/datasets/justinas/nba-players-data",
+    skills: [
+      "Merging two DataFrames on player name",
+      "Creating computed columns (PER, value score)",
+      "Scatter plot with color and size encoding",
+      "Outlier labeling (best/worst value players)",
+      "Filtering by position"
+    ],
+    steps: [
+      "Load player stats and salary CSVs",
+      "Merge on player name (handle mismatches)",
+      "Compute Value Score = Points per game / Salary (millions)",
+      "Find top 10 and bottom 10 value players",
+      "Scatter plot: Salary vs Points, colored by position",
+      "Label outliers with player names",
+      "Answer: Which position has the best salary efficiency?"
+    ]
+  },
+  {
+    day: 9,
+    title: "E-Commerce Customer Segmentation with RFM Analysis",
+    difficulty: "intermediate",
+    domain: "finance",
+    duration: "6–7 hrs",
+    tools: ["Python", "Pandas", "Matplotlib", "Seaborn"],
+    desc: "Use the classic RFM (Recency, Frequency, Monetary) framework to segment e-commerce customers into groups: Champions, At-Risk, Lost, and more.",
+    objective: "Build a real marketing analytics tool that assigns customer segments based on purchasing behavior.",
+    dataset: "UCI Online Retail Dataset",
+    datasetUrl: "https://archive.ics.uci.edu/dataset/352/online+retail",
+    skills: [
+      "Date arithmetic with datetime",
+      "GroupBy with multiple aggregation functions",
+      "Custom scoring with pd.qcut()",
+      "Segment labeling with np.where / map",
+      "Visualization of segment sizes"
+    ],
+    steps: [
+      "Load Excel file with pd.read_excel()",
+      "Remove cancelled orders (InvoiceNo starting with C)",
+      "Calculate Recency, Frequency, Monetary per customer",
+      "Assign R, F, M scores using quartiles (1–4)",
+      "Create RFM combined score and assign segment labels",
+      "Count and visualize customers per segment",
+      "Answer: What % of customers are 'Champions' vs 'At Risk'?"
+    ]
+  },
+  {
+    day: 10,
+    title: "Global Suicide Rates — Trend & Demographic Analysis",
+    difficulty: "intermediate",
+    domain: "health",
+    duration: "5–6 hrs",
+    tools: ["Python", "Pandas", "Matplotlib", "Seaborn"],
+    desc: "A sobering but important dataset. Analyze global suicide trends over decades, broken down by country, gender, age group, and GDP. Understand risk factors through data.",
+    objective: "Perform multi-dimensional aggregation and trend analysis on sensitive public health data.",
+    dataset: "WHO Suicide Statistics (Kaggle)",
+    datasetUrl: "https://www.kaggle.com/datasets/russellyates88/suicide-rates-overview-1985-to-2016",
+    skills: [
+      "Multi-level groupby aggregation",
+      "Normalizing rates per 100k population",
+      "Faceted subplots (plt.subplots)",
+      "Trend analysis across decades",
+      "Cross-tabulation"
+    ],
+    steps: [
+      "Load data and explore all demographic columns",
+      "Compute global rate per 100k per year",
+      "Plot global trend line from 1985–2016",
+      "Compare male vs female rates over time",
+      "Find top 10 countries by total suicides per 100k",
+      "Plot rate by age group using a bar chart",
+      "Explore correlation between GDP and suicide rate"
+    ]
+  },
+  {
+    day: 11,
+    title: "US Election Results Geographic Analysis",
+    difficulty: "intermediate",
+    domain: "social",
+    duration: "5–6 hrs",
+    tools: ["Python", "Pandas", "Matplotlib", "Geopandas"],
+    desc: "Analyze US presidential election results at the county level. Visualize which counties swung between elections and how demographic factors relate to voting patterns.",
+    objective: "Work with geographic data and create a county-level choropleth map of election results.",
+    dataset: "MIT Election Lab – County Presidential Returns",
+    datasetUrl: "https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/VOQCHQ",
+    skills: [
+      "Merging election data with geographic shapefiles",
+      "Computing vote margin and swing",
+      "Choropleth maps with Geopandas",
+      "State-level aggregation",
+      "Comparative analysis across election years"
+    ],
+    steps: [
+      "Load election results CSV and inspect columns",
+      "Filter to 2016 and 2020 presidential results",
+      "Compute Democratic margin per county",
+      "Calculate 'swing' between elections",
+      "Merge with county shapefile using FIPS code",
+      "Plot choropleth map colored by party margin",
+      "Identify top 10 counties that swung most"
+    ]
+  },
+  {
+    day: 12,
+    title: "Airbnb Listings Price Prediction & Market Analysis",
+    difficulty: "intermediate",
+    domain: "finance",
+    duration: "6–7 hrs",
+    tools: ["Python", "Pandas", "Seaborn", "Scikit-learn"],
+    desc: "Analyze Airbnb listings in a major city. Understand what drives listing prices — neighborhood, room type, number of reviews — and build a simple linear regression model.",
+    objective: "Combine EDA with introductory predictive modeling to understand what factors influence Airbnb pricing.",
+    dataset: "Inside Airbnb – Open Data",
+    datasetUrl: "http://insideairbnb.com/get-the-data/",
+    skills: [
+      "Cleaning price strings ($, commas) to numeric",
+      "Neighborhood-level aggregation",
+      "Correlation analysis for feature selection",
+      "Simple linear regression with Scikit-learn",
+      "Interpreting model coefficients"
+    ],
+    steps: [
+      "Download listings.csv for a city of your choice",
+      "Clean price column and remove extreme outliers",
+      "Compute median price by neighborhood and room type",
+      "Visualize price distribution with a box plot",
+      "Build correlation matrix to identify price predictors",
+      "Train a linear regression on numeric features",
+      "Evaluate R² score and interpret coefficients"
+    ]
+  },
+  {
+    day: 13,
+    title: "FIFA Player Ratings — Who Are the World's Best?",
+    difficulty: "intermediate",
+    domain: "sports",
+    duration: "5 hrs",
+    tools: ["Python", "Pandas", "Matplotlib", "Seaborn"],
+    desc: "Explore FIFA player rating data to find the best players by position, club, and nationality. Build visual rankings and understand what attributes make a top-rated player.",
+    objective: "Multi-dimensional ranking, attribute analysis, and radar chart creation for player comparisons.",
+    dataset: "FIFA 22/23 Complete Player Dataset (Kaggle)",
+    datasetUrl: "https://www.kaggle.com/datasets/bryanb/fifa-player-stats-database",
+    skills: [
+      "Filtering and sorting DataFrames",
+      "Groupby with ranking (nlargest)",
+      "Radar/spider chart creation",
+      "Attribute correlation analysis",
+      "Data normalization for comparison"
+    ],
+    steps: [
+      "Load player data and explore all rating columns",
+      "Find top 10 players per position by overall rating",
+      "Compare club averages: which club has best squad depth?",
+      "Nationality analysis: top 10 countries by average rating",
+      "Select 3 players and compare attributes in a radar chart",
+      "Correlate individual attributes with overall rating",
+      "Answer: Is pace or passing more important for high overall rating?"
+    ]
+  },
+  {
+    day: 14,
+    title: "Stock Market Historical Performance Analysis",
+    difficulty: "intermediate",
+    domain: "finance",
+    duration: "6–7 hrs",
+    tools: ["Python", "Pandas", "yfinance", "Matplotlib"],
+    desc: "Pull real stock market data using the yfinance library. Analyze the performance of 5 major stocks over 5 years, calculate returns, volatility, and build a comparison chart.",
+    objective: "Work with live financial time-series data, compute financial metrics, and visualize portfolio performance.",
+    dataset: "Yahoo Finance via yfinance Python library",
+    datasetUrl: "https://pypi.org/project/yfinance/",
+    skills: [
+      "Fetching data with yfinance API",
+      "Computing daily and cumulative returns",
+      "Rolling volatility (standard deviation)",
+      "Normalized price charts for comparison",
+      "Sharpe ratio calculation"
+    ],
+    steps: [
+      "Install and import yfinance, fetch AAPL, MSFT, GOOGL, AMZN, TSLA",
+      "Compute daily percentage return",
+      "Calculate cumulative returns from Jan 2019",
+      "Plot normalized price chart (all starting at 100)",
+      "Compute 30-day rolling volatility per stock",
+      "Calculate annualized Sharpe ratio for each stock",
+      "Rank stocks by risk-adjusted return"
+    ]
+  },
+  {
+    day: 15,
+    title: "Twitter / X Sentiment Analysis on a Trending Topic",
+    difficulty: "advanced",
+    domain: "social",
+    duration: "7–8 hrs",
+    tools: ["Python", "Pandas", "NLTK", "TextBlob", "Matplotlib"],
+    desc: "Analyze a dataset of tweets on a real trending topic. Use natural language processing to classify sentiment as positive, negative, or neutral and visualize the results.",
+    objective: "Introduction to NLP: text cleaning, tokenization, polarity scoring, and word frequency analysis.",
+    dataset: "Twitter Sentiment Dataset (Kaggle)",
+    datasetUrl: "https://www.kaggle.com/datasets/kazanova/sentiment140",
+    skills: [
+      "Text cleaning: remove URLs, mentions, hashtags",
+      "Tokenization and stopword removal",
+      "Sentiment scoring with TextBlob",
+      "Word frequency and word cloud creation",
+      "Sentiment trend analysis over time"
+    ],
+    steps: [
+      "Load dataset and inspect text and timestamp columns",
+      "Clean tweets: strip URLs, @mentions, special chars",
+      "Apply TextBlob to compute polarity score",
+      "Classify as Positive / Neutral / Negative",
+      "Count and visualize sentiment distribution (pie chart)",
+      "Create a word cloud for positive and negative tweets",
+      "Plot sentiment trend over time if timestamps available"
+    ]
+  },
+  {
+    day: 16,
+    title: "Global Energy Consumption & Renewable Transition",
+    difficulty: "advanced",
+    domain: "health",
+    duration: "6–7 hrs",
+    tools: ["Python", "Pandas", "Matplotlib", "Seaborn"],
+    desc: "Explore global energy data to understand how countries are transitioning from fossil fuels to renewables. Compute renewable share, track changes over decades, and rank progress.",
+    objective: "Complex multi-year, multi-country time-series analysis with trend forecasting.",
+    dataset: "Our World in Data – Energy Dataset",
+    datasetUrl: "https://github.com/owid/energy-data",
+    skills: [
+      "Handling large multi-country longitudinal data",
+      "Computing renewable energy share",
+      "Year-over-year change calculation",
+      "Faceted charts for regional comparison",
+      "Simple trend projection"
+    ],
+    steps: [
+      "Load OWID energy CSV and inspect 50+ columns",
+      "Filter to key columns: country, year, renewables, fossil fuels",
+      "Compute renewable_share = renewables_electricity / electricity_generation",
+      "Find top 15 countries by renewable share in latest year",
+      "Plot renewable share over time for G7 countries",
+      "Calculate 10-year growth in renewable share per country",
+      "Identify which regions are transitioning fastest"
+    ]
+  },
+  {
+    day: 17,
+    title: "Hospital Readmission Risk Factor Analysis",
+    difficulty: "advanced",
+    domain: "health",
+    duration: "7–8 hrs",
+    tools: ["Python", "Pandas", "Scikit-learn", "Seaborn"],
+    desc: "Analyze hospital diabetes patient data to identify risk factors for 30-day readmission. Build a logistic regression model to predict readmission probability.",
+    objective: "End-to-end healthcare analytics project: EDA → feature engineering → binary classification.",
+    dataset: "Diabetes 130 US Hospitals Dataset (UCI)",
+    datasetUrl: "https://archive.ics.uci.edu/dataset/296/diabetes+130-us+hospitals+for+years+1999-2008",
+    skills: [
+      "Encoding categorical variables",
+      "Class imbalance awareness",
+      "Logistic regression with Scikit-learn",
+      "Confusion matrix interpretation",
+      "Feature importance from model coefficients"
+    ],
+    steps: [
+      "Load dataset and handle '?' missing values",
+      "Encode readmitted column as binary (30 days vs not)",
+      "Drop irrelevant IDs and high-null columns",
+      "One-hot encode categorical features",
+      "Split into train/test (80/20)",
+      "Train logistic regression and evaluate accuracy",
+      "Plot confusion matrix and extract top risk factors"
+    ]
+  },
+  {
+    day: 18,
+    title: "Olympic Games Medal Analysis — 120 Years of Data",
+    difficulty: "intermediate",
+    domain: "sports",
+    duration: "5–6 hrs",
+    tools: ["Python", "Pandas", "Matplotlib", "Seaborn"],
+    desc: "Dive into 120 years of Olympic history. Track which countries dominate which sports, how the games have grown, and how political events shaped medal counts.",
+    objective: "Large-scale historical data analysis with complex groupby operations and trend visualization.",
+    dataset: "120 Years of Olympic History (Kaggle)",
+    datasetUrl: "https://www.kaggle.com/datasets/heesoo37/120-years-of-olympic-history-athletes-and-results",
+    skills: [
+      "Deduplication strategies for medal counting",
+      "Multi-level groupby operations",
+      "Animated bar chart (optional: bar chart race)",
+      "Historical event annotation on charts",
+      "Sport-level analysis"
+    ],
+    steps: [
+      "Load athlete events CSV — inspect structure",
+      "Deduplicate medals (team events inflate counts)",
+      "Compute all-time medal table by country",
+      "Plot USA vs USSR/Russia vs China medal trend",
+      "Annotate boycott years (1980, 1984) on chart",
+      "Find which country dominates each sport",
+      "Analyze gender participation growth over decades"
+    ]
+  },
+  {
+    day: 19,
+    title: "NYC Taxi Trips — Demand Forecasting & Pattern Analysis",
+    difficulty: "advanced",
+    domain: "social",
+    duration: "7–8 hrs",
+    tools: ["Python", "Pandas", "Matplotlib", "Scikit-learn"],
+    desc: "Use NYC yellow taxi trip data to understand demand patterns by hour, day, and borough. Build a simple demand forecasting model and identify peak revenue zones.",
+    objective: "Handle a large real-world dataset (millions of rows), perform time-based feature engineering, and build a regression model.",
+    dataset: "NYC Taxi & Limousine Commission (TLC) Trip Data",
+    datasetUrl: "https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page",
+    skills: [
+      "Efficient data loading with chunking or sampling",
+      "Time-based feature extraction (hour, day, month)",
+      "Geospatial zone-level aggregation",
+      "Demand heatmap by hour and day of week",
+      "Linear regression for demand prediction"
+    ],
+    steps: [
+      "Download 1 month of yellow taxi data (Parquet format)",
+      "Sample 500k rows for analysis",
+      "Extract hour, day_of_week, month from pickup datetime",
+      "Aggregate trip count by hour and weekday",
+      "Plot demand heatmap (hour × day of week)",
+      "Identify top 10 pickup zones by revenue",
+      "Build regression to predict hourly demand"
+    ]
+  },
+  {
+    day: 20,
+    title: "Global Wealth & Income Inequality — Gini Index Analysis",
+    difficulty: "advanced",
+    domain: "finance",
+    duration: "6–7 hrs",
+    tools: ["Python", "Pandas", "Matplotlib", "Geopandas"],
+    desc: "Analyze global income inequality using the Gini coefficient and World Bank data. Map inequality across the globe, correlate it with GDP, and track how it's changing.",
+    objective: "Combine World Bank API data, geographic mapping, and multi-variable correlation analysis.",
+    dataset: "World Bank Open Data",
+    datasetUrl: "https://data.worldbank.org/indicator/SI.POV.GINI",
+    skills: [
+      "Fetching data from World Bank API with wbdata/pandas-datareader",
+      "Handling wide-format data (years as columns)",
+      "Choropleth mapping with Geopandas",
+      "Correlation: Gini vs GDP per capita",
+      "Regional average comparisons"
+    ],
+    steps: [
+      "Fetch Gini index data for all countries",
+      "Reshape from wide to long format with pd.melt()",
+      "Compute most recent Gini per country",
+      "Merge with world shapefile for mapping",
+      "Plot global choropleth of Gini coefficients",
+      "Scatter plot: Gini vs GDP per capita",
+      "Identify most and least equal countries by region"
+    ]
+  },
+  {
+    day: 21,
+    title: "End-to-End Analytics Dashboard — Your Choice Dataset",
+    difficulty: "advanced",
+    domain: "education",
+    duration: "8–10 hrs",
+    tools: ["Python", "Pandas", "Matplotlib", "Seaborn", "Plotly / Streamlit"],
+    desc: "Your capstone project. Choose any dataset that interests you. Perform a complete analytics workflow: define a question, clean the data, explore, analyze, and present findings in an interactive dashboard.",
+    objective: "Demonstrate every skill learned in the previous 20 days in one cohesive, shareable project.",
+    dataset: "Your choice — see suggested sources below",
+    datasetUrl: "https://www.kaggle.com/datasets",
+    skills: [
+      "Full data cleaning pipeline",
+      "Exploratory data analysis",
+      "Statistical insight extraction",
+      "Multi-chart dashboard layout",
+      "Storytelling with data (narrative insights)"
+    ],
+    steps: [
+      "Choose a dataset that genuinely interests you",
+      "Define 3 specific questions you want to answer",
+      "Run full cleaning pipeline: nulls, types, duplicates",
+      "EDA: distributions, correlations, outliers",
+      "Build 5+ visualizations answering your questions",
+      "Create a Streamlit or Plotly Dash dashboard",
+      "Write a findings report with actionable insights",
+      "Share on GitHub with a README"
+    ]
+  }
+];
+
+function renderProjects(filter = 'all') {
+  const grid = document.getElementById('projectsGrid');
+  grid.innerHTML = '';
+
+  const filtered = filter === 'all'
+    ? projects
+    : projects.filter(p => p.difficulty === filter || p.domain === filter);
+
+  filtered.forEach((p, i) => {
+    const card = document.createElement('div');
+    card.className = `project-card`;
+    card.style.animationDelay = `${i * 0.04}s`;
+    card.dataset.difficulty = p.difficulty;
+    card.dataset.domain = p.domain;
+
+    const diffClass = `tag-diff-${p.difficulty}`;
+    const toolsHtml = p.tools.map(t => `<span class="tool-chip">${t}</span>`).join('');
+    const skillsHtml = p.skills.map(s => `<li>${s}</li>`).join('');
+    const stepsHtml = p.steps.map(s => `<li>${s}</li>`).join('');
+
+    card.innerHTML = `
+      <div class="card-header">
+        <div class="day-badge">D${String(p.day).padStart(2,'0')}</div>
+        <div class="card-title-area">
+          <div class="card-title">${p.title}</div>
+          <div class="card-tags">
+            <span class="tag ${diffClass}">${p.difficulty}</span>
+            <span class="tag tag-domain">${p.domain}</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="section-label">What You'll Do</div>
+        <p class="card-desc">${p.desc}</p>
+        <div class="info-grid">
+          <div class="info-block"><div class="label">Duration</div><div class="value">${p.duration}</div></div>
+          <div class="info-block"><div class="label">Objective</div><div class="value">${p.objective.substring(0,60)}...</div></div>
+          <div class="info-block"><div class="label">Dataset</div><div class="value">${p.dataset}</div></div>
+          <div class="info-block"><div class="label">Tools</div><div class="value">${p.tools.slice(0,3).join(', ')}</div></div>
+        </div>
+        <div class="section-label">Tech Stack</div>
+        <div class="tools-row">${toolsHtml}</div>
+      </div>
+      <button class="expand-toggle" onclick="toggleExpand(this)">
+        <span>Skills & Step-by-Step Guide</span>
+        <span class="expand-arrow">▾</span>
+      </button>
+      <div class="expandable">
+        <div class="expand-content">
+          <div class="section-label" style="margin-bottom:10px">Skills You'll Practice</div>
+          <ul class="skills-list">${skillsHtml}</ul>
+          <div class="section-label" style="margin-top:16px; margin-bottom:10px">Step-by-Step Workflow</div>
+          <ol class="steps-list">${stepsHtml}</ol>
+          <a href="${p.datasetUrl}" target="_blank" class="dataset-link-btn">
+            ↗ Get Dataset
+          </a>
+        </div>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function toggleExpand(btn) {
+  const expandable = btn.nextElementSibling;
+  const isOpen = expandable.classList.contains('open');
+  expandable.classList.toggle('open');
+  btn.classList.toggle('open');
+}
+
+function filterProjects(filter) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  renderProjects(filter);
+}
+
+renderProjects();
+</script>
+</body>
+</html>
